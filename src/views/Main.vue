@@ -27,21 +27,28 @@
       title="发送阅后即焚🔥">
       <el-form
         :model="sendFireForm"
-        ref="dataForm"
+        :rules="rules"
+        ref="sendFireForm"
         label-position="left"
         label-width="50%"
-        style="width: 100%; text-align: center;"
+        style="width: 100%; text-align: center; padding-bot: 20px;"
       >
         <el-form-item label="给你的文件取个名字吧！📤" prop="showName">
           <el-input type="textarea" :rows="1" v-model="sendFireForm.showName"></el-input>
         </el-form-item>
         <el-input type="hidden" v-model="sendFireForm.path"></el-input>
         <el-input type="hidden" v-model="sendFireForm.fileName"></el-input>
-        <el-form-item label="请选择过期时间">
-<!--          <el-radio-group v-model="sendFireForm.expireLevel">-->
-<!--            <el-radio v-for="(radio, index) in subjectList" :key="index" :label="radio">{{radio}}</el-radio>-->
-<!--          </el-radio-group>-->
-          <el-select v-model="sendFireForm.expireLevel" placeholder="请选择">
+        <el-form-item label="请选择有效时间 ⏱️" class="expireLabel">
+          <el-switch
+            v-model="expireValue"
+            active-text="过期"
+            inactive-text="不过期"
+            @change="expireChange"
+          >
+          </el-switch>
+          <el-select v-model="sendFireForm.expireLevel"
+                     placeholder="请选择"
+                     :disabled="!expireValue">
             <el-option
               v-for="(data, index) in expireLevelList"
               :key="index"
@@ -50,37 +57,17 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="正确答案" prop="correctAnswer">
-          <el-input v-model="sendFireForm.correctAnswer" />
+        <el-form-item label="文件大小 💾" prop="fileSize">
+          <el-input :disabled="true" v-model="sendFireForm.fileSize">
+          </el-input>
         </el-form-item>
-        <el-form-item label="其他答案1" prop="otherAnswer1">
-          <el-input v-model="sendFireForm.otherAnswer1" />
-        </el-form-item>
-        <el-form-item label="其他答案2" prop="otherAnswer2">
-          <el-input v-model="sendFireForm.otherAnswer2" />
-        </el-form-item>
-        <el-form-item label="其他答案3" prop="otherAnswer3">
-          <el-input v-model="sendFireForm.otherAnswer3" />
-        </el-form-item>
-        <el-form-item label="所属年级">
-          <el-select
-            v-model="sendFireForm.userGrades"
-            class="filter-item"
-            placeholder="选择年级"
-            multiple
-          >
-            <el-option
-              v-for="item in tabMapOptions"
-              :key="item.key"
-              :label="item.label"
-              :value="item.key"
-            />
-          </el-select>
+        <el-form-item label="你是谁？ 🤷" prop="username">
+          <el-input  v-model="sendFireForm.username"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click=" createData() ">确定</el-button>
+        <el-button type="primary" @click=" sendFire() ">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -88,32 +75,30 @@
 
 <script>
 import {baseURL} from "../utils/config";
+import {formatBytes} from "../utils/utils";
 
 export default {
   name: "Main",
   data () {
     return {
       uploadAction: baseURL + '/file/uploadFile',
-      expireLevelList: ["黄金", "白银", "钻石"],
-      input: "",
-      tabMapOptions: [
-        { label: "幼儿园", key: "kinderGarten" },
-        { label: "一年级", key: "firstGrade" },
-        { label: "二年级", key: "secondGrade" },
-        { label: "三年级", key: "threeGrade" },
-        { label: "四年级", key: "fourthGrade" },
-        { label: "五年级", key: "fifthGrade" },
-        { label: "六年级", key: "sixGrade" },
-        { label: "小学以上", key: "gradeSchool" },
-      ],
+      expireLevelList: [],
+      fileSize: null,
+      filePath: null,
+      fileName: null,
+      expireValue: true,
       sendFireForm: {
-        questionContent: "",
-        correctAnswer: "",
-        otherAnswer1: "",
-        otherAnswer2: "",
-        otherAnswer3: "",
-        userGrades: [],
-        expireLevel: "",
+        showName: null,
+        path: null,
+        fileName: null,
+        fileSize: null,
+        username: null,
+        expire: true,
+        expireLevel: null,
+      },
+      rules: {
+        showName: [{required: true, message: '请输入', trigger: 'blur'}],
+        username: [{required: true, message: '请输入', trigger: 'blur'}]
       },
       dialogFormVisible: false
     }
@@ -130,6 +115,9 @@ export default {
       this.expireLevelList = result.data;
     },
     handleRemove(file) {
+      this.filePath = null
+      this.fileName = null
+      this.fileSize = null
       console.log(file);
     },
     handlePreview(file) {
@@ -143,42 +131,75 @@ export default {
     },
     afterSuccess(response, file) {
       this.$message.success(`上传成功，请填写该分享文件的信息吧`)
-      // alert(response.data)
-      // alert(file.size)
+      this.filePath = response.data,
+      this.fileName = file.name,
+      this.fileSize = formatBytes(file.size)
     },
     handleCreate() {
+      if (this.filePath == null || this.fileName == null || this.fileSize == null) {
+        this.$message({
+          type: "warning",
+          message: " ops,请先上传文件！😟",
+          center: true
+        })
+        return
+      }
       this.sendFireForm = {
-        questionContent: "",
-        correctAnswer: "",
-        otherAnswer1: "",
-        otherAnswer2: "",
-        otherAnswer3: "",
-        userGrades: [],
-        questionCategory: "",
+        path: this.filePath,
+        fileName: this.fileName,
+        fileSize: this.fileSize,
+        showName: null,
+        username: null,
+        expire: true,
+        expireLevel: null,
       };
       this.dialogFormVisible = true;
     },
-    //添加增加题目
-    async createData() {
-      const params = this.sendFireForm;
-      alert(JSON.stringify(params))
-
-      //如果需要调用接口，请打开注释
-      //   const res = await saveSubject(params);
-      //   console.log(res);
-      //   if (res.code === "0000") {
-      //     this.$message({
-      //       type: "info",
-      //       message: "保存成功",
-      //     });
-      //     this.dialogFormVisible = false;
-      //     this.getQuerySubjectList();
-      //     return;
-      //   }
-      //   this.$message({
-      //     type: "error",
-      //     message: "保存失败",
-      //   });
+    expireChange() {
+      this.sendFireForm.expire = this.expireValue
+    },
+    // 发送阅后即焚
+    async sendFire() {
+      this.$refs.sendFireForm.validate(async (valid) => {
+        if (valid) {
+          const result = await this.$axios({
+            url: '/fire/sendFireFile',
+            method: 'post',
+            data: {
+              ...this.sendFireForm
+            }
+          }).then(res => res);
+          // 清空文件
+          this.$refs.upload.clearFiles()
+          this.dialogFormVisible = false
+          if (result.code === 0 && result.data) {
+            let keyCodeShare = '给你发送一个只能查看一次的文件，请及时查看哦~' + '链接： http://'+result.data.key;
+            if (result.data.code) {
+              keyCodeShare = keyCodeShare + '；提取码：' + result.data.code
+            }
+            this.$alert('链接：http://'+result.data.key + '；提取码:' + result.data.code, '发送成功~', {
+              confirmButtonText: '复制链接',
+              center: true,
+              callback: action => {
+                var input = document.createElement('input');     //创建一个隐藏input（重要！）
+                input.value = keyCodeShare;    //拼接多个赋值
+                document.body.appendChild(input);
+                input.select(); // 选择对象
+                document.execCommand("Copy"); // 执行浏览器复制命令
+                input.hidden = true
+                this.$message({
+                  type: 'success',
+                  message: `复制成功！`
+                });
+              }
+            });
+          } else {
+            this.$message.warning(result.errMsg)
+          }
+        } else {
+          this.$message.warning('请输入完整哦')
+        }
+      })
     },
   }
 }
@@ -197,5 +218,10 @@ export default {
 
   .el-form-item__label{
     line-height: 20px;
+    padding-top: 10px;
+  }
+
+  .expireLabel .el-form-item__label{
+    padding-top: 35px;
   }
 </style>

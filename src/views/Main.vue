@@ -2,7 +2,6 @@
   <div class="main">
     <el-row>
       <el-upload
-        class="upload-demo"
         :action="uploadAction"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
@@ -11,17 +10,16 @@
         ref="upload"
         :limit="1"
         :on-exceed="handleExceed">
-        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+        <el-button slot="trigger" class="fireButton">选取文件</el-button>
         <div slot="tip" class="el-upload__tip">上传的文件限制为100MB</div>
       </el-upload>
     </el-row>
-    <el-button
-      class="filter-item"
-      style="margin-left: 10px;"
-      type="primary"
-      icon="el-icon-edit"
-      @click="handleCreate"
-    >添加</el-button>
+    <el-row style="margin-top: 50px">
+      <el-button
+        class="fireButton"
+        @click="handleCreate"
+      > 🔥 发送</el-button>
+    </el-row>
     <el-dialog
       :visible.sync="dialogFormVisible"
       title="发送阅后即焚🔥">
@@ -223,5 +221,16 @@ export default {
 
   .expireLabel .el-form-item__label{
     padding-top: 35px;
+  }
+  .fireButton{
+    margin-top: 50px;
+    height: 75px;
+    width: 250px;
+    font-size: 24px;
+    border-radius: 5px;
+    box-shadow:  -20px 0 20px 5px rgba(213, 255, 145, 0.5),
+    0px -20px 20px 5px rgba(145, 255, 191, 0.5),
+    20px 0 20px 5px rgba(82, 255, 220, 0.5),
+    0 20px 20px 5px rgba(239, 255, 91, 0.5);
   }
 </style>

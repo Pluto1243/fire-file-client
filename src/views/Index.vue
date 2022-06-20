@@ -30,6 +30,7 @@ export default {
 <style>
   .main{
     width: 100%;
+    margin: 120px auto;
     text-align: center;
   }
   .indexButton{

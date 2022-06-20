@@ -18,7 +18,7 @@
       <el-button
         class="fireButton"
         @click="handleCreate"
-      > 🔥 发送</el-button>
+      > 🛩️ 发送</el-button>
     </el-row>
     <el-dialog
       :visible.sync="dialogFormVisible"

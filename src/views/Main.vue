@@ -20,6 +20,7 @@
         @click="handleCreate"
       > 🛩️ 发送</el-button>
     </el-row>
+    <el-button @click="toIndex" class="returnButton">返回</el-button><br/>
     <el-dialog
       :visible.sync="dialogFormVisible"
       title="发送阅后即焚🔥">
@@ -199,6 +200,9 @@ export default {
         }
       })
     },
+    toIndex() {
+      this.$router.push("/")
+    }
   }
 }
 </script>
@@ -232,5 +236,11 @@ export default {
     0px -20px 20px 5px rgba(145, 255, 191, 0.5),
     20px 0 20px 5px rgba(82, 255, 220, 0.5),
     0 20px 20px 5px rgba(239, 255, 91, 0.5);
+  }
+  .returnButton{
+    background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
+    margin-top: 50px;
+    color: white;
+    border-radius: 5px;
   }
 </style>

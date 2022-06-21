@@ -1,7 +1,7 @@
 <template>
   <div id="share" class="main">
     <el-button @click="toMain" class="indexButton">🔥 发送阅后即焚</el-button><br/>
-    <el-input placeholder="请输入提取链接" v-model="key" class="input-with-select" style="margin-top:150px; width: 50%">
+    <el-input placeholder="请输入key提取" v-model="key" class="input-with-select" style="margin-top:150px; width: 60%;">
       <el-button slot="append" icon="el-icon-search" @click="toShare"></el-button>
     </el-input>
     <router-view/>

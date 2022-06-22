@@ -10,19 +10,20 @@
         ref="upload"
         :limit="1"
         :on-exceed="handleExceed">
-        <el-button slot="trigger" class="fireButton">选取文件</el-button>
+        <el-button slot="trigger" id="fireButton">选取文件</el-button>
         <div slot="tip" class="el-upload__tip">上传的文件限制为100MB</div>
       </el-upload>
     </el-row>
     <el-row style="margin-top: 50px">
       <el-button
-        class="fireButton"
+        id="sendButton"
         @click="handleCreate"
       > 🛩️ 发送</el-button>
     </el-row>
-    <el-button @click="toIndex" class="returnButton">返回</el-button><br/>
+    <el-button @click="toIndex" id="returnButtonMain">返回</el-button><br/>
     <el-dialog
       :visible.sync="dialogFormVisible"
+      id="sendDialog"
       title="发送阅后即焚🔥">
       <el-form
         :model="sendFireForm"
@@ -170,9 +171,12 @@ export default {
           }).then(res => res);
           // 清空文件
           this.$refs.upload.clearFiles()
+          this.fileSize = null
+          this.fileName = null
+          this.filePath = null
           this.dialogFormVisible = false
           if (result.code === 0 && result.data) {
-            let keyCodeShare = '给你发送一个只能查看一次的文件，请及时查看哦~' + '链接： '+ clientURL + '/s/' + result.data.key;
+            let keyCodeShare = '给你发送一个只能查看一次的文件，请及时查看哦~' + ' 链接： '+ clientURL + '/s/' + result.data.key;
             if (result.data.code) {
               keyCodeShare = keyCodeShare + '；提取码：' + result.data.code
             }
@@ -222,7 +226,7 @@ export default {
   .expireLabel .el-form-item__label{
     padding-top: 35px;
   }
-  .fireButton{
+  #sendButton{
     margin-top: 50px;
     height: 75px;
     width: 250px;
@@ -233,7 +237,18 @@ export default {
     20px 0 20px 5px rgba(82, 255, 220, 0.5),
     0 20px 20px 5px rgba(239, 255, 91, 0.5);
   }
-  .returnButton{
+  #fireButton{
+    margin-top: 50px;
+    height: 75px;
+    width: 250px;
+    font-size: 24px;
+    border-radius: 5px;
+    box-shadow:  -20px 0 20px 5px rgba(213, 255, 145, 0.5),
+    0px -20px 20px 5px rgba(145, 255, 191, 0.5),
+    20px 0 20px 5px rgba(82, 255, 220, 0.5),
+    0 20px 20px 5px rgba(239, 255, 91, 0.5);
+  }
+  #returnButtonMain{
     background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
     margin-top: 50px;
     color: white;

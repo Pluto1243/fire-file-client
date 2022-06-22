@@ -13,7 +13,7 @@
       </div>
     </div>
     <router-view/>
-    <el-dialog title="提取文件" :visible.sync="dialogFileVisible">
+    <el-dialog title="提取文件" :visible.sync="dialogFileVisible" id="extractFile">
       <div style="text-align:left;">
         <span class="span1">分享名称 🤩： </span><span> {{ showName }}</span><br/>
         <span class="span1">文件大小 💾： </span><span> {{ fileSize }}</span><br/>
@@ -24,8 +24,8 @@
         <el-button slot="append" icon="el-icon-download" @click="extractFile"></el-button>
       </el-input>
     </el-dialog>
-    <el-button @click="getFireFileWithKey" class="returnButton">再次提取</el-button><br/>
-    <el-button @click="toIndex" class="returnButton">返回</el-button><br/>
+    <el-button @click="getFireFileWithKey" id="extractAgain">再次提取</el-button><br/>
+    <el-button @click="toIndex" id="returnButton">返回</el-button><br/>
   </div>
 </template>
 
@@ -76,11 +76,6 @@ export default {
         this.$message.warning('请输入提取码');
         return
       }
-      // const result = await this.$axios({
-      //   url: '/fire/extractFile?key=' + this.key + '&code='+ this.code,
-      //   method: 'get',
-      //   responseType: 'blob'
-      // }).then(res => res);
 
       const result = await this.$axios('/fire/extractFile?key=' + this.key + '&code='+ this.code, {
         responseType: 'blob',  // zip文件流需要添加，不然文件无法打开
@@ -112,11 +107,21 @@ export default {
   }
 
   .el-dialog{
-    width: 350px;
-    text-align: center;
+    width: 300px !important;
+    text-align: center !important;
   }
 
-  .returnButton{
+  #returnButton{
+    background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
+    margin-top: 25px;
+    width: 200px;
+    height: 50px;
+    font-size: 16px;
+    color: white;
+    border-radius: 5px;
+  }
+
+  #extractAgain{
     background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
     margin-top: 25px;
     width: 200px;

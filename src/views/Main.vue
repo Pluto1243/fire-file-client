@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import {baseURL} from "../utils/config";
+import {baseURL, clientURL} from "../utils/config";
 import {formatBytes} from "../utils/utils";
 
 export default {
@@ -172,11 +172,11 @@ export default {
           this.$refs.upload.clearFiles()
           this.dialogFormVisible = false
           if (result.code === 0 && result.data) {
-            let keyCodeShare = '给你发送一个只能查看一次的文件，请及时查看哦~' + '链接： http://'+result.data.key;
+            let keyCodeShare = '给你发送一个只能查看一次的文件，请及时查看哦~' + '链接： '+ clientURL + '/s/' + result.data.key;
             if (result.data.code) {
               keyCodeShare = keyCodeShare + '；提取码：' + result.data.code
             }
-            this.$alert('链接：http://'+result.data.key + '；提取码:' + result.data.code, '发送成功~', {
+            this.$alert('链接：'+ clientURL + '/s/' + result.data.key + '；提取码:' + result.data.code, '发送成功~', {
               confirmButtonText: '复制链接',
               center: true,
               callback: action => {
@@ -212,10 +212,6 @@ export default {
     width: 100%;
     margin: 120px auto;
     text-align: center;
-  }
-
-  .el-dialog{
-    width: 75%;
   }
 
   .el-form-item__label{

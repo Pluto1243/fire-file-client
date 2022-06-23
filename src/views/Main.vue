@@ -183,19 +183,18 @@ export default {
             this.$alert('链接：'+ clientURL + '/s/' + result.data.key + '；提取码:' + result.data.code, '发送成功~', {
               confirmButtonText: '复制链接',
               center: true,
-              callback: action => {
-                var input = document.createElement('input');     //创建一个隐藏input（重要！）
-                input.value = keyCodeShare;    //拼接多个赋值
-                document.body.appendChild(input);
-                input.select(); // 选择对象
-                document.execCommand("Copy"); // 执行浏览器复制命令
-                input.hidden = true
-                this.$message({
-                  type: 'success',
-                  message: `复制成功！`
-                });
-              }
-            });
+            }).then(() => {
+              var input = document.createElement('input');     //创建一个隐藏input（重要！）
+              input.value = keyCodeShare;    //拼接多个赋值
+              document.body.appendChild(input);
+              input.select(); // 选择对象
+              document.execCommand("Copy"); // 执行浏览器复制命令
+              input.hidden = true
+              this.$message({
+                type: 'success',
+                message: `复制成功！`
+              });
+            })
           } else {
             this.$message.warning(result.errMsg)
           }

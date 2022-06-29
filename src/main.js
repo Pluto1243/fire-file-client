@@ -35,6 +35,16 @@ Vue.prototype.openLoading = function() {
 
 Vue.prototype.$axios = service;
 
+// resize for scaling the board size
+window.addEventListener('resize', onResize)
+// set size on startup
+onResize()
+
+function onResize() {
+  // get actual vh on mobile
+  document.body.style.setProperty('--vh', window.innerHeight + 'px')
+}
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

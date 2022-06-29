@@ -1,5 +1,5 @@
 <template>
-  <div id="share" class="share">
+  <div id="share" class="main">
     <div class="error-main clearfix" :hidden="keyError">
       <div class="label"></div>
       <div class="info">
@@ -95,9 +95,9 @@ export default {
 </script>
 
 <style>
-  .share{
+  .main{
     width: 100%;
-    margin: 120px auto;
+    margin: 50px auto;
     text-align: center;
   }
 
